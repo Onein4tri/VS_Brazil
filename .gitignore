@@ -1,0 +1,13 @@
+# Python / VS Code
+.venv/
+.vscode/
+__pycache__/
+*.pyc
+*.log
+.ipynb_checkpoints/
+
+# OS junk
+.DS_Store
+
+# (Optional) big data files
+data/

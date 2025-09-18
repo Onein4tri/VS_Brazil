@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-cc4dcbde8080f0e2e2605e0ed20f9049"}, "mark": {"type": "line", "point": true}, "encoding": {"color": {"field": "Country", "type": "nominal"}, "tooltip": [{"field": "Country", "type": "nominal"}, {"field": "Year", "type": "quantitative"}, {"field": "Score", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"field": "Score", "title": "Happiness Score (0\u201310)", "type": "quantitative"}}, "height": 420, "title": "Happiness Trends Over Time (2015\u20132019)", "width": 640, "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-cc4dcbde8080f0e2e2605e0ed20f9049": [{"Country": "Brazil", "Score": 6.983, "Year": 2015}, {"Country": "Brazil", "Score": 6.63500022888184, "Year": 2017}, {"Country": "Brazil", "Score": 6.3, "Year": 2019}, {"Country": "Finland", "Score": 7.406, "Year": 2015}, {"Country": "Finland", "Score": 7.4689998626709, "Year": 2017}, {"Country": "Finland", "Score": 7.769, "Year": 2019}, {"Country": "India", "Score": 4.565, "Year": 2015}, {"Country": "India", "Score": 4.31500005722046, "Year": 2017}, {"Country": "India", "Score": 4.015, "Year": 2019}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

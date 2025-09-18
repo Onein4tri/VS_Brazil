@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-e582e16b89b8826477be0ec1f0981bdf"}, "mark": {"type": "bar"}, "encoding": {"tooltip": [{"field": "Country or region", "type": "nominal"}, {"field": "Score", "type": "quantitative"}, {"field": "GDP per capita", "type": "quantitative"}], "x": {"field": "Score", "title": "Happiness Score (0\u201310)", "type": "quantitative"}, "y": {"field": "Country or region", "sort": "-x", "title": "Country", "type": "nominal"}}, "height": 280, "title": "Selected Countries \u2014 Happiness Score (2019)", "width": 650, "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-e582e16b89b8826477be0ec1f0981bdf": [{"Overall rank": 1, "Country or region": "Finland", "Score": 7.769, "GDP per capita": 1.34, "Social support": 1.587, "Healthy life expectancy": 0.986, "Freedom to make life choices": 0.596, "Generosity": 0.153, "Perceptions of corruption": 0.393}, {"Overall rank": 7, "Country or region": "Sweden", "Score": 7.343, "GDP per capita": 1.387, "Social support": 1.487, "Healthy life expectancy": 1.009, "Freedom to make life choices": 0.574, "Generosity": 0.267, "Perceptions of corruption": 0.373}, {"Overall rank": 8, "Country or region": "New Zealand", "Score": 7.307, "GDP per capita": 1.303, "Social support": 1.557, "Healthy life expectancy": 1.026, "Freedom to make life choices": 0.585, "Generosity": 0.33, "Perceptions of corruption": 0.38}, {"Overall rank": 9, "Country or region": "Canada", "Score": 7.278, "GDP per capita": 1.365, "Social support": 1.505, "Healthy life expectancy": 1.039, "Freedom to make life choices": 0.584, "Generosity": 0.285, "Perceptions of corruption": 0.308}, {"Overall rank": 27, "Country or region": "Guatemala", "Score": 6.436, "GDP per capita": 0.8, "Social support": 1.269, "Healthy life expectancy": 0.746, "Freedom to make life choices": 0.535, "Generosity": 0.175, "Perceptions of corruption": 0.078}, {"Overall rank": 29, "Country or region": "Qatar", "Score": 6.374, "GDP per capita": 1.684, "Social support": 1.313, "Healthy life expectancy": 0.871, "Freedom to make life choices": 0.555, "Generosity": 0.22, "Perceptions of corruption": 0.167}, {"Overall rank": 32, "Country or region": "Brazil", "Score": 6.3, "GDP per capita": 1.004, "Social support": 1.439, "Healthy life expectancy": 0.802, "Freedom to make life choices": 0.39, "Generosity": 0.099, "Perceptions of corruption": 0.086}, {"Overall rank": 34, "Country or region": "Singapore", "Score": 6.262, "GDP per capita": 1.572, "Social support": 1.463, "Healthy life expectancy": 1.141, "Freedom to make life choices": 0.556, "Generosity": 0.271, "Perceptions of corruption": 0.453}, {"Overall rank": 106, "Country or region": "South Africa", "Score": 4.722, "GDP per capita": 0.96, "Social support": 1.351, "Healthy life expectancy": 0.469, "Freedom to make life choices": 0.389, "Generosity": 0.13, "Perceptions of corruption": 0.055}, {"Overall rank": 140, "Country or region": "India", "Score": 4.015, "GDP per capita": 0.755, "Social support": 0.765, "Healthy life expectancy": 0.588, "Freedom to make life choices": 0.498, "Generosity": 0.2, "Perceptions of corruption": 0.085}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

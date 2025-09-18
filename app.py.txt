@@ -1,0 +1,140 @@
+# app.py  — World Happiness Explorer (your own code)
+# Data: Life satisfaction ("Cantril ladder") and GDP per capita served by Our World in Data (OWID).
+# Sources: WHR/Gallup via OWID; World Bank GDP per capita via OWID.
+# The app builds 3 Altair charts and a Streamlit UI with sidebar controls + tabs.
+
+import streamlit as st
+import pandas as pd
+import altair as alt
+
+st.set_page_config(page_title="World Happiness Explorer", layout="wide")
+
+@st.cache_data(show_spinner=False)
+def load_data():
+    # Official OWID "grapher" CSV endpoints (pulled live; no manual cleaning).
+    # Life satisfaction (0–10), WHR/Gallup via OWID
+    happiness_url = "https://ourworldindata.org/grapher/happiness-cantril-ladder.csv"
+    # GDP per capita (World Bank), via OWID
+    gdp_url = "https://ourworldindata.org/grapher/gdp-per-capita-worldbank.csv"
+
+    # Load CSVs
+    h = pd.read_csv(happiness_url)
+    g = pd.read_csv(gdp_url)
+
+    # Standardize column names
+    h = h.rename(columns={
+        "Entity":"country", "Code":"iso_code", "Year":"year",
+        "happiness-cantril-ladder":"life_ladder"
+    })
+    g = g.rename(columns={
+        "Entity":"country", "Code":"iso_code", "Year":"year",
+        "gdp-per-capita-worldbank":"gdp_per_capita"
+    })
+
+    # Keep real countries (have ISO code) and merge
+    h = h.dropna(subset=["iso_code"])
+    g = g.dropna(subset=["iso_code"])
+    df = pd.merge(h, g, on=["country","iso_code","year"], how="left")
+    return df
+
+df = load_data()
+
+# ========== SIDEBAR CONTROLS ==========
+st.sidebar.header("Controls")
+
+years = sorted(df["year"].dropna().unique())
+default_year = years[-1]  # last available year
+year = st.sidebar.selectbox("Year", years, index=years.index(default_year))
+
+rank_mode = st.sidebar.radio("Ranking view", ["Top N happiest", "Bottom N happiest"], horizontal=True)
+N = st.sidebar.slider("How many countries (N)", 5, 25, 10, 1)
+
+use_log = st.sidebar.toggle("Log scale for GDP (scatter)", value=True)
+show_trend = st.sidebar.toggle("Show trendline (scatter)", value=True)
+
+country_options = sorted(df["country"].unique())
+default_country = "Brazil" if "Brazil" in country_options else country_options[0]
+trend_countries = st.sidebar.multiselect(
+    "Countries for trend (1–3)", country_options, default=[default_country], max_selections=3
+)
+
+# ========== TABS ==========
+tab1, tab2, tab3 = st.tabs(["🏆 Rankings", "💵 GDP vs Happiness", "📈 Trends"])
+
+# --- Tab 1: Rankings (bar chart) ---
+with tab1:
+    st.subheader(f"Happiness rankings — {year}")
+    d = df[df["year"] == year].dropna(subset=["life_ladder"]).copy()
+
+    if rank_mode.startswith("Top"):
+        d = d.sort_values("life_ladder", ascending=False).head(N)
+    else:
+        d = d.sort_values("life_ladder", ascending=True).head(N)
+
+    chart1 = (
+        alt.Chart(d)
+        .mark_bar()
+        .encode(
+            y=alt.Y("country:N", sort="-x", title=None),
+            x=alt.X("life_ladder:Q", title="Happiness score (0–10)"),
+            tooltip=["country", alt.Tooltip("life_ladder:Q", title="Score")]
+        )
+        .properties(height=28 * len(d), width="container")
+    )
+    st.altair_chart(chart1, use_container_width=True)
+
+# --- Tab 2: Scatter (GDP vs Happiness) ---
+with tab2:
+    st.subheader(f"GDP per capita vs. happiness — {year}")
+    d2 = df[df["year"] == year].dropna(subset=["life_ladder", "gdp_per_capita"]).copy()
+
+    base = (
+        alt.Chart(d2)
+        .mark_circle(size=80, opacity=0.75)
+        .encode(
+            x=alt.X(
+                "gdp_per_capita:Q",
+                title="GDP per capita (World Bank, US$)",
+                scale=alt.Scale(type="log") if use_log else alt.Scale(type="linear")
+            ),
+            y=alt.Y("life_ladder:Q", title="Happiness score (0–10)"),
+            tooltip=["country", "life_ladder", "gdp_per_capita"]
+        )
+    )
+
+    if show_trend:
+        trend = (
+            alt.Chart(d2)
+            .transform_regression("gdp_per_capita", "life_ladder")
+            .mark_line(color="black")
+        )
+        chart2 = base + trend
+    else:
+        chart2 = base
+
+    st.altair_chart(chart2.properties(height=480), use_container_width=True)
+
+# --- Tab 3: Trends (lines over time) ---
+with tab3:
+    st.subheader("Happiness over time")
+    if len(trend_countries) == 0:
+        st.info("Select at least one country in the sidebar.")
+    else:
+        d3 = df[df["country"].isin(trend_countries)].dropna(subset=["life_ladder"]).copy()
+        chart3 = (
+            alt.Chart(d3)
+            .mark_line(point=True)
+            .encode(
+                x=alt.X("year:O", title="Year"),
+                y=alt.Y("life_ladder:Q", title="Happiness score (0–10)"),
+                color="country:N",
+                tooltip=["country", "year", "life_ladder"]
+            )
+            .properties(height=480)
+        )
+        st.altair_chart(chart3, use_container_width=True)
+
+st.caption(
+    "Data: Life satisfaction (Cantril ladder) from the World Happiness Report / Gallup World Poll, "
+    "and GDP per capita (World Bank) — both served by Our World in Data."
+)
