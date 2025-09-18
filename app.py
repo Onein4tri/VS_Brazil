@@ -7,7 +7,7 @@ import altair as alt
 import numpy as np
 from pathlib import Path
 
-st.set_page_config(page_title="World Happiness — Altair + Streamlit", layout="wide")
+st.set_page_config(page_title="World Happiness", layout="wide")
 alt.data_transformers.disable_max_rows()
 
 # ---------- helpers ----------
@@ -64,7 +64,7 @@ def load_data():
 # ---------- load ----------
 d2019, dall = load_data()
 
-st.title("World Happiness (Kaggle) — Altair + Streamlit")
+st.title("World Happiness")
 
 # ---------- sidebar ----------
 default10 = ["Finland","Canada","New Zealand","Singapore","India","Qatar","Brazil","Guatemala","South Africa","Sweden"]
@@ -210,4 +210,4 @@ with tab3:
         )
         st.altair_chart(chart3, use_container_width=True)
 
-st.caption("Data: World Happiness Report (Kaggle, 2015–2019). 2019.csv required; 2015/2017 optional for trends.")
+st.caption("Data: World Happiness Report (Kaggle, 2015–2019).")

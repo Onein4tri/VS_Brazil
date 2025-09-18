@@ -1,0 +1,216 @@
+# GitHub → Streamlit Cloud: Step‑by‑Step Checklist (Windows + VS Code)
+
+This is a single document you can follow next time to push a VS Code project to GitHub and deploy to **Streamlit Community Cloud**. It includes the exact clicks and commands we used.
+
+---
+
+## 0) What you need
+- Windows 11
+- A GitHub account (you already have this)
+- Visual Studio Code (VS Code)
+
+---
+
+## 1) Install Git (one time)
+1. Close VS Code if open.
+2. Open: **https://git-scm.com/download/win**
+3. Run the installer. Keep defaults, but choose:
+   - **Default editor** → **Visual Studio Code**
+   - **PATH** → **Git from the command line and also from 3rd‑party software**
+4. Finish.
+5. Quick check (optional): Open **Git Bash** and run `git --version`.
+
+---
+
+## 2) Open your project in VS Code
+1. VS Code → **File → Open Folder…** → select your project folder (e.g., `VS_Brazil`).  
+2. Confirm you can see your files in the Explorer (left side).
+
+---
+
+## 3) Install the GitHub extension in VS Code (if Marketplace doesn’t load)
+Preferred: search and install **GitHub Pull Requests and Issues** from the Extensions view.
+
+If it doesn’t appear:
+1. In a browser open: **https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github**
+2. Click **Install** to download the `.vsix` file.
+3. In VS Code: **View → Extensions** → **⋯** (three dots) → **Install from VSIX…** → pick the downloaded file.
+
+---
+
+## 4) Sign in to GitHub inside VS Code
+1. Click the **account icon** (bottom‑left in VS Code).
+2. Click **Sign in with GitHub** (or the prompt “Sign in with GitHub to use GitHub Pull Requests”).  
+3. Authorize in the browser → return to VS Code. You should see your GitHub username at bottom‑left.
+
+---
+
+## 5) Turn the folder into a Git repository
+Open VS Code **Terminal** (``Ctrl+` ``) and run:
+```bash
+git init
+```
+
+---
+
+## 6) Add a `.gitignore` (so Git skips venv and junk)
+Create a new file named **`.gitignore`** in your project root with:
+```
+# Python / VS Code
+.venv/
+.vscode/
+__pycache__/
+*.pyc
+*.log
+.ipynb_checkpoints/
+
+# OS junk
+.DS_Store
+
+# (Optional) big data files
+data/
+```
+> Keep small CSVs if you like, but avoid files > 100MB.
+
+---
+
+## 7) Stage and commit your files
+In the Terminal:
+```bash
+git add .
+git status      # optional: see what will be committed
+```
+If Git asks for your identity:
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your-email@example.com"
+```
+Then commit:
+```bash
+git commit -m "first commit"
+```
+
+> If you accidentally staged thousands of `.venv` files, fix with:
+> ```bash
+> git rm -r --cached .
+> git add .
+> git commit -m "clean commit (ignore venv)"
+> ```
+
+---
+
+## 8) Publish to GitHub (create the online repo)
+1. VS Code left sidebar → **Source Control**.
+2. Click **Publish Branch**.
+3. Choose **Publish to GitHub public repository** (easier to share) or **private** if you want to invite specific people only.
+4. Copy the repo URL that appears, e.g.:
+   - `https://github.com/<your-username>/<your-repo>`
+
+---
+
+## 9) Add `requirements.txt` (for Streamlit Cloud) and push
+Create **`requirements.txt`** in your project root:
+```
+streamlit>=1.36
+pandas
+altair
+numpy
+```
+Stage/commit/push:
+```bash
+git add requirements.txt
+git commit -m "add requirements"
+git push
+```
+
+---
+
+## 10) Deploy to Streamlit Community Cloud
+1. Go to **https://streamlit.io/cloud** and sign in with GitHub.
+2. Click **New app** (or “Deploy a public app from GitHub”).
+3. Fill the form:
+   - **Repository**: `<your-username>/<your-repo>`  (e.g., `Onein4tri/VS_Brazil`)
+   - **Branch**: `master` (or `main` if that’s your branch)
+   - **Main file path**: `app.py`
+   - (Optional) App URL: a short name (e.g., `vs-brazil`)
+4. Click **Deploy** and wait for the build to finish.
+
+Your live app URL will look like:
+```
+https://<your-app-name>.streamlit.app
+```
+Example: `https://vs-brazil.streamlit.app`
+
+---
+
+## 11) What to send to a teacher
+- **Live interactive app**: your Streamlit URL (e.g., `https://vs-brazil.streamlit.app`)
+- **Source code**: your GitHub repo URL (e.g., `https://github.com/<you>/<repo>`)
+
+In your report, add a section:
+```
+Interactive dashboard: https://<your-app>.streamlit.app
+Source code: https://github.com/<you>/<repo>
+```
+
+---
+
+## 12) Add a README to your GitHub repo (nice touch)
+Create **`README.md`** in your project root. Example content:
+```markdown
+# World Happiness Dashboard 🌍✨
+
+This project visualizes the World Happiness Report using **Python, Altair, and Streamlit**.
+
+## 🚀 Live App
+https://<your-app>.streamlit.app
+
+## 📂 Dataset
+- `happiness.csv` (World Happiness Report)
+
+## 🧪 Run locally
+```bash
+git clone https://github.com/<you>/<repo>.git
+cd <repo>
+pip install -r requirements.txt
+streamlit run app.py
+```
+```
+
+Commit & push:
+```bash
+git add README.md
+git commit -m "add README"
+git push
+```
+
+---
+
+## 13) How to update the app later
+Any time you change files:
+```bash
+git add .
+git commit -m "your message"
+git push
+```
+Streamlit Cloud will auto‑redeploy from GitHub.
+
+---
+
+## 14) Common issues & quick fixes
+- **Author identity unknown** → set `user.name` and `user.email` (see Step 7).
+- **Accidentally tracked `.venv`** → run the *clean* sequence (see Step 7 note).
+- **GitHub blocks push for big files** (>100MB) → don’t commit huge data files. Use cloud storage if needed.
+- **Marketplace doesn’t show GitHub extension** → install from VSIX (Step 3).
+- **App fails on deploy (missing package)** → add it to `requirements.txt`, commit, push, redeploy.
+- **CSV not found** → ensure the CSV files are in the repo and the code reads correct paths.
+
+---
+
+## 15) Optional: Make repo private after submission
+On GitHub → **Settings → Danger Zone → Change visibility** → **Make private** (then invite collaborators if needed).
+
+---
+
+### Done! 🎉
+You now have a repeatable recipe to go from VS Code → GitHub → Streamlit Cloud with a shareable link.
