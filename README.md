@@ -3,9 +3,9 @@
 This project visualizes data from the World Happiness Report using **Python, Altair, and Streamlit**.
 
 ##  Features
-- Rankings (2019) — bar chart of happiness scores
+- Rankings (2024) — bar chart of happiness scores
 - GDP vs Happiness — scatterplot with trendline
-- Trends (2015–2019) — line chart for selected countries
+- Trends (2015–2024) — line chart for selected countries
 
 ##  Live App
 Click here to interact with the dashboard:  
